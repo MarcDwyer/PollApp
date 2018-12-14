@@ -6,6 +6,7 @@ import * as serviceWorker from './serviceWorker';
 
 import Poll from './components/poll'
 import CreatePost from './components/create_post'
+import Completed from './components/complete'
 
 ReactDOM.render(
 <BrowserRouter>
