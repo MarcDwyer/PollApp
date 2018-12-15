@@ -33,6 +33,7 @@ func main() {
 	//	http.Handle("/", http.FileServer(http.Dir("./")))
 	router.POST("/api/create", Api)
 	router.POST("/api/getpoll", Api)
+	router.POST("/api/update", Api)
 	router.NotFound = http.FileServer(http.Dir("./public"))
 	log.Fatal(http.ListenAndServe(":5000", router))
 }

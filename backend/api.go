@@ -30,8 +30,12 @@ type ReceivedPoll struct {
 	Quest4 *ReceivedQ `json:"quest4,omitempty"`
 }
 type ReceivedQ struct {
-	Count    *int    `json:"count,omitempty"`
-	Question *string `json:"question,omitempty"`
+	Count    int    `json:"count"`
+	Question string `json:"question"`
+}
+type UpdatePoll struct {
+	Id       bson.ObjectId `json:"_id"`
+	Question string        `json:"question"`
 }
 
 func Api(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -65,5 +69,17 @@ func Api(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 		result, _ := json.Marshal(rec)
 		w.Write(result)
+		return
+	case "/api/update":
+		upd := &UpdatePoll{}
+		json.NewDecoder(r.Body).Decode(&upd)
+		str := fmt.Sprintf("%v.count", upd.Question)
+		change := bson.M{"$inc": bson.M{str: 1}}
+		fmt.Println("hee")
+		err := c.UpdateId(upd.Id, change)
+		if err != nil {
+			fmt.Println(err)
+		}
+		return
 	}
 }
