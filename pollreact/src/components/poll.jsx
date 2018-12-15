@@ -6,14 +6,7 @@ export default class Poll extends Component {
         this.state = {
             isChecked: `name0`,
             add: '',
-            questions: [
-                {
-                    name: 'Yes'
-                },
-                {
-                    name: 'No'
-                }
-            ]
+            questions: null
         }
     }
     render() {

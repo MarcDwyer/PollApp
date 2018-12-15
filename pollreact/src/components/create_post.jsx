@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { Route } from 'react-router-dom'
-import _ from 'lodash'
 import Nav from './nav'
 
-import Complete from './complete'
+import Completed from './complete'
 export default class CreatePost extends Component {
     constructor(props) {
         super(props)
@@ -14,6 +13,7 @@ export default class CreatePost extends Component {
         }
     }
     componentWillMount() {
+        
         for (let x = 0; x < 5; x++) {
             const path = `quest${x}`
             this.setState((state) => {
@@ -21,7 +21,7 @@ export default class CreatePost extends Component {
             })
         }
     }
-    componentDidUpdate() {
+    componentDidUpdate(prevProps, prevState) {
         //checks to see if all inputs have a value... it they do, another input tag is displayed
     (() => {
         const { number } = this.state;
@@ -45,8 +45,8 @@ export default class CreatePost extends Component {
     render() {
         return (
             <div>
+            <Route path="/completed/:id" render={(props) => <Completed {...props} id={this.state.id} /> } />
             <Nav />
-            <Route path="/completed" render={(props) => <Complete {...props} id={this.state.id} />} />
             <div className="contained">
             <div className="poll">
             <h4>Create a poll</h4>
@@ -68,7 +68,6 @@ export default class CreatePost extends Component {
 
     }
     renderInput = () => {
-
     const sort = Object.keys(this.state).filter(item => item.startsWith('quest'))
        return sort.map((item, i) => {
             if (i < this.state.number) {
@@ -97,7 +96,7 @@ export default class CreatePost extends Component {
             obj[first] = {question: item[first], [second]: 0}
            return obj
         }, {})
-        console.log(submitted)
+        
         const postFetch = await fetch('/api/create', {
             method: 'POST',
             headers:{
@@ -106,10 +105,9 @@ export default class CreatePost extends Component {
             body: JSON.stringify(submitted)
         })
         const fetchRes = await postFetch.json()
-        this.setState({id: fetchRes}, () => {
-            this.props.history.push('/completed')
+        this.setState({id: fetchRes, quest0: '', quest1: '', quest2: '', quest3: '', quest4: ''}, () => {
+            this.props.history.push(`/completed/${fetchRes}`)
         })
-
     }
 }
 
