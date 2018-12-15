@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import uuid from 'uuid'
 import Nav from './nav'
+import { Link } from 'react-router-dom'
 export default class Poll extends Component {
     constructor(props) {
         super(props)
         this.state = {
             isChecked: `quest0`,
-
+            isComplete: false,
+            submitted: null,
             questions: null
         }
     }
@@ -24,6 +26,24 @@ export default class Poll extends Component {
     render() {
         console.log(this.state)
         if (!this.state.questions) return null
+        if (this.state.isComplete) {
+            return (
+                <div>
+                <Nav />
+                <div className="contained">
+                <div className="poll">
+                <h4>The results are in!</h4>
+                <div className="actualpoll">
+                <ul> 
+                    {this.renderResults()}
+                </ul>
+                <Link to="/" className="waves-effect waves-light btn pollbtn">Create new poll</Link>
+                </div>
+                </div>
+                </div>
+                </div>
+            )
+        }
         return (
             <div>
                 <Nav />
@@ -60,11 +80,14 @@ export default class Poll extends Component {
               body: JSON.stringify(payload)
         })
         console.log(updateFetch)
+        if (updateFetch.status === 200) {
+            const { isChecked, submitted, questions } = this.state
+            this.setState({isComplete: true, submitted: questions[isChecked].question})
+        }
     }
     renderQuestions = () => {
         const { questions } = this.state
-        return Object.values(questions).map(({ question, count }, index) => {
-
+        return Object.values(questions).map(({ question }, index) => {
             return (
             <p key={uuid()}>
               <label>
@@ -74,5 +97,19 @@ export default class Poll extends Component {
             </p>
             )
         })
+    }
+    renderResults = () => {
+        const { questions, submitted  } = this.state
+
+        return Object.values(questions).map(({ question, count }, index) => {
+            if (question === submitted) count += 1
+            return (
+                <li key={uuid()} className="thevotes">
+                    <span>{question}</span>
+                    <span className="votes">{count} Votes</span>
+                </li>
+            )
+        })
+        
     }
 }

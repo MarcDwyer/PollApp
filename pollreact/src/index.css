@@ -74,3 +74,10 @@ input::placeholder {
   margin: auto;
   font-size: 85px;
 }
+.thevotes {
+  border-bottom: 1px solid #eee;
+}
+.votes {
+  float: right;
+  margin-right: 10px;
+}
