@@ -24,12 +24,13 @@ type Question struct {
 	Question *string `bson:"question,omitempty"`
 }
 type ReceivedPoll struct {
-	Title  string     `json:"title,omitempty"`
-	Quest0 *ReceivedQ `json:"quest0,omitempty"`
-	Quest1 *ReceivedQ `json:"quest1,omitempty"`
-	Quest2 *ReceivedQ `json:"quest2,omitempty"`
-	Quest3 *ReceivedQ `json:"quest3,omitempty"`
-	Quest4 *ReceivedQ `json:"quest4,omitempty"`
+	Id     bson.ObjectId `bson:"_id"`
+	Title  string        `json:"title,omitempty"`
+	Quest0 *ReceivedQ    `json:"quest0,omitempty"`
+	Quest1 *ReceivedQ    `json:"quest1,omitempty"`
+	Quest2 *ReceivedQ    `json:"quest2,omitempty"`
+	Quest3 *ReceivedQ    `json:"quest3,omitempty"`
+	Quest4 *ReceivedQ    `json:"quest4,omitempty"`
 }
 type ReceivedQ struct {
 	Count    int    `json:"count"`

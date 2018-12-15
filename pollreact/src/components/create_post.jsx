@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
-import { Route } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Nav from './nav'
-
-import Completed from './complete'
 export default class CreatePost extends Component {
     constructor(props) {
         super(props)
@@ -10,7 +8,8 @@ export default class CreatePost extends Component {
             error: null,
             number: 2,
             id: null,
-            title: ''
+            title: '',
+            isComplete: false
         }
     }
     componentWillMount() {
@@ -44,9 +43,27 @@ export default class CreatePost extends Component {
     })() 
     }
     render() {
+        if (this.state.isComplete) {
+            return (
+                <div>
+                <Nav />
+            <div className="contained">
+            <div className="poll">
+            <h4>Poll Submitted</h4>
+            <div className="actualpoll">
+            <div className="check">
+            <i className="fa fa-check" />
+            </div>
+    
+            <Link to={`/poll-survey/${this.state.id}`} className="waves-effect waves-light btn pollbtn">View Poll</Link>
+            </div>
+            </div>
+            </div>
+            </div>
+            ) 
+        }
         return (
             <div>
-            <Route path="/completed/:id" render={(props) => <Completed {...props} id={this.state.id} /> } />
             <Nav />
             <div className="contained">
             <div className="poll">
@@ -104,7 +121,6 @@ export default class CreatePost extends Component {
             obj.title = this.state.title
            return obj
         }, {})
-        console.log(submitted)
         const postFetch = await fetch('/api/create', {
             method: 'POST',
             headers:{
@@ -113,9 +129,7 @@ export default class CreatePost extends Component {
             body: JSON.stringify(submitted)
         })
         const fetchRes = await postFetch.json()
-        this.setState({id: fetchRes, quest0: '', quest1: '', quest2: '', quest3: '', quest4: ''}, () => {
-            this.props.history.push(`/completed/${fetchRes}`)
-        })
+        this.setState({id: fetchRes, isComplete: true, quest0: '', quest1: '', quest2: '', quest3: '', quest4: ''})
     }
 }
 

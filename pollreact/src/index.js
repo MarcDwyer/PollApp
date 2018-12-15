@@ -6,12 +6,14 @@ import * as serviceWorker from './serviceWorker';
 
 import Poll from './components/poll'
 import CreatePost from './components/create_post'
+import Results from './components/results'
 // import Completed from './components/complete'
 
 ReactDOM.render(
 <BrowserRouter>
 <Switch>
-    <Route path="/poll-results/:id" component={Poll} />
+    <Route exact path="/poll-survey/:id" component={Poll} />
+    <Route exact path="/poll-results/:id" component={Results} />
     <Route path="/" component={CreatePost} />
 </Switch>
 </BrowserRouter>

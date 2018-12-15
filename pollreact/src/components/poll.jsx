@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import uuid from 'uuid'
 import Nav from './nav'
-import { Link } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 export default class Poll extends Component {
     constructor(props) {
         super(props)
@@ -25,7 +25,7 @@ export default class Poll extends Component {
         this.setState({questions: pollData})
     }
     render() {
-        console.log(this.state)
+        console.log(this.props)
         if (!this.state.questions) {
             return (
                 <div>
@@ -42,24 +42,6 @@ export default class Poll extends Component {
       </div>
     </div>
   </div>
-                </div>
-                </div>
-            )
-        }
-        if (this.state.isComplete) {
-            return (
-                <div>
-                <Nav />
-                <div className="contained">
-                <div className="poll">
-                <h4>The results are in!</h4>
-                <div className="actualpoll">
-                <ul> 
-                    {this.renderResults()}
-                </ul>
-                <Link to="/" className="waves-effect waves-light btn pollbtn">Create new poll</Link>
-                </div>
-                </div>
                 </div>
                 </div>
             )
@@ -102,7 +84,10 @@ export default class Poll extends Component {
         console.log(updateFetch)
         if (updateFetch.status === 200) {
             const { isChecked, questions } = this.state
-            this.setState({isComplete: true, submitted: questions[isChecked].question})
+            this.setState({isComplete: true, submitted: questions[isChecked]}, () => {
+                console.log("ello")
+                this.props.history.push(`/poll-results/${questions.Id}`)
+            })
         }
     }
     renderQuestions = () => {
@@ -120,19 +105,5 @@ export default class Poll extends Component {
             </p>
             )
         })
-    }
-    renderResults = () => {
-        const { questions, submitted  } = this.state
-        const filtered = Object.values(questions).filter(item => item.question);
-        return filtered.map(({ question, count }) => {
-            if (question === submitted) count += 1
-            return (
-                <li key={uuid()} className="thevotes">
-                    <span>{question}</span>
-                    <span className="votes">{count} Votes</span>
-                </li>
-            )
-        })
-        
     }
 }
