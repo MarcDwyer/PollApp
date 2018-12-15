@@ -16,8 +16,7 @@ export default class Poll extends Component {
             <h4>Poll</h4>
             <div className="actualpoll">
             <form onSubmit={this.handleSubmit}>
-            <ul>
-                {this.renderQuestions()}  
+            <ul> 
             </ul>
             </form>
             <button className="waves-effect waves-light btn pollbtn">Submit Answer</button>

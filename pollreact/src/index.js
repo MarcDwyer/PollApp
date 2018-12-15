@@ -11,7 +11,7 @@ import CreatePost from './components/create_post'
 ReactDOM.render(
 <BrowserRouter>
 <Switch>
-    <Route path="/poll/:id" component={Poll} />
+    <Route path="/poll-results/:id" component={Poll} />
     <Route path="/" component={CreatePost} />
 </Switch>
 </BrowserRouter>
