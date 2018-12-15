@@ -9,7 +9,8 @@ export default class CreatePost extends Component {
         this.state = {
             error: null,
             number: 2,
-            id: null
+            id: null,
+            title: ''
         }
     }
     componentWillMount() {
@@ -52,6 +53,12 @@ export default class CreatePost extends Component {
             <h4>Create a poll</h4>
             <div className="actualpoll">
             <form onSubmit={this.handleSubmit}>
+            <div className="row">
+    <div className="input-field col s12">
+      <input name="title" value={this.state.title} id="first_name2" type="text" className="validate" onChange={this.handleChange} />
+      <label className="active">Enter a title</label>
+    </div>
+  </div>
             <ul className="marginthis">
             {this.renderInput()}
             </ul>
@@ -94,9 +101,10 @@ export default class CreatePost extends Component {
         }).reduce((obj, item, i) => {
             const [first, second] = Object.keys(item)
             obj[first] = {question: item[first], [second]: 0}
+            obj.title = this.state.title
            return obj
         }, {})
-        
+        console.log(submitted)
         const postFetch = await fetch('/api/create', {
             method: 'POST',
             headers:{

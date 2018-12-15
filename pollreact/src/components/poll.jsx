@@ -21,11 +21,31 @@ export default class Poll extends Component {
               body: JSON.stringify(this.props.match.params.id)
         })
         const pollData = await pollFetch.json()
+        console.log(pollData)
         this.setState({questions: pollData})
     }
     render() {
         console.log(this.state)
-        if (!this.state.questions) return null
+        if (!this.state.questions) {
+            return (
+                <div>
+                    <Nav />
+                    <div className="contained">
+                    <div className="preloader-wrapper big active">
+    <div className="spinner-layer spinner-blue-only">
+      <div className="circle-clipper left">
+        <div className="circle"></div>
+      </div><div className="gap-patch">
+        <div className="circle"></div>
+      </div><div className="circle-clipper right">
+        <div className="circle"></div>
+      </div>
+    </div>
+  </div>
+                </div>
+                </div>
+            )
+        }
         if (this.state.isComplete) {
             return (
                 <div>
@@ -49,7 +69,7 @@ export default class Poll extends Component {
                 <Nav />
             <div className="contained">
             <div className="poll">
-            <h4>Poll</h4>
+            <h4>{this.state.questions.title}</h4>
             <div className="actualpoll">
             <form onSubmit={this.handleSubmit}>
             <ul> 
@@ -81,13 +101,16 @@ export default class Poll extends Component {
         })
         console.log(updateFetch)
         if (updateFetch.status === 200) {
-            const { isChecked, submitted, questions } = this.state
+            const { isChecked, questions } = this.state
             this.setState({isComplete: true, submitted: questions[isChecked].question})
         }
     }
     renderQuestions = () => {
         const { questions } = this.state
-        return Object.values(questions).map(({ question }, index) => {
+        const filtered = Object.values(questions).filter(item => item.question);
+        console.log(filtered)
+        return filtered.map(({ question }, index) => {
+            if (!question) return
             return (
             <p key={uuid()}>
               <label>
@@ -100,8 +123,8 @@ export default class Poll extends Component {
     }
     renderResults = () => {
         const { questions, submitted  } = this.state
-
-        return Object.values(questions).map(({ question, count }, index) => {
+        const filtered = Object.values(questions).filter(item => item.question);
+        return filtered.map(({ question, count }) => {
             if (question === submitted) count += 1
             return (
                 <li key={uuid()} className="thevotes">

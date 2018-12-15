@@ -12,6 +12,7 @@ import (
 
 type Poll struct {
 	Id     bson.ObjectId `bson:"_id"`
+	Title  string        `bson:"title,omitempty"`
 	Quest0 *Question     `bson:"quest0,omitempty"`
 	Quest1 *Question     `bson:"quest1,omitempty"`
 	Quest2 *Question     `bson:"quest2,omitempty"`
@@ -23,6 +24,7 @@ type Question struct {
 	Question *string `bson:"question,omitempty"`
 }
 type ReceivedPoll struct {
+	Title  string     `json:"title,omitempty"`
 	Quest0 *ReceivedQ `json:"quest0,omitempty"`
 	Quest1 *ReceivedQ `json:"quest1,omitempty"`
 	Quest2 *ReceivedQ `json:"quest2,omitempty"`
@@ -55,6 +57,7 @@ func Api(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if err != nil {
 			fmt.Println(err)
 		}
+		fmt.Println(*poll)
 		rz, _ := json.Marshal(poll.Id)
 		w.Write(rz)
 		return
@@ -66,7 +69,7 @@ func Api(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if err != nil {
 			fmt.Println(err)
 		}
-
+		fmt.Println(rec)
 		result, _ := json.Marshal(rec)
 		w.Write(result)
 		return
