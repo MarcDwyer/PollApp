@@ -58,7 +58,6 @@ func Api(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println(*poll)
 		rz, _ := json.Marshal(poll.Id)
 		w.Write(rz)
 		return
@@ -70,7 +69,6 @@ func Api(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println(rec)
 		result, _ := json.Marshal(rec)
 		w.Write(result)
 		return
@@ -79,7 +77,6 @@ func Api(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		json.NewDecoder(r.Body).Decode(&upd)
 		str := fmt.Sprintf("%v.count", upd.Question)
 		change := bson.M{"$inc": bson.M{str: 1}}
-		fmt.Println("hee")
 		err := c.UpdateId(upd.Id, change)
 		if err != nil {
 			fmt.Println(err)

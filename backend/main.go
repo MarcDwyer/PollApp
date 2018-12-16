@@ -31,6 +31,7 @@ func main() {
 	// r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/build")))
 	// router.NotFound = http.FileServer(http.Dir("public")) cannot find url
 	//	http.Handle("/", http.FileServer(http.Dir("./")))
+	go Socketme()
 	router.POST("/api/create", Api)
 	router.POST("/api/getpoll", Api)
 	router.POST("/api/update", Api)

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import uuid from 'uuid'
 import Nav from './nav'
-import { Route } from 'react-router-dom'
+import Results from './results'
 export default class Poll extends Component {
     constructor(props) {
         super(props)
@@ -19,13 +19,12 @@ export default class Poll extends Component {
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify(this.props.match.params.id)
-        })
-        const pollData = await pollFetch.json()
-        console.log(pollData)
-        this.setState({questions: pollData})
+            })
+         const pollData = await pollFetch.json()
+            this.setState({questions: pollData})
     }
     render() {
-        console.log(this.props)
+       
         if (!this.state.questions) {
             return (
                 <div>
@@ -45,7 +44,7 @@ export default class Poll extends Component {
                 </div>
                 </div>
             )
-        }
+        } 
         return (
             <div>
                 <Nav />
@@ -81,19 +80,17 @@ export default class Poll extends Component {
               },
               body: JSON.stringify(payload)
         })
-        console.log(updateFetch)
         if (updateFetch.status === 200) {
             const { isChecked, questions } = this.state
             this.setState({isComplete: true, submitted: questions[isChecked]}, () => {
-                console.log("ello")
-                this.props.history.push(`/poll-results/${questions.Id}`)
+                this.props.history.push(`/poll-results/${this.state.questions.Id}`)
             })
         }
     }
     renderQuestions = () => {
         const { questions } = this.state
         const filtered = Object.values(questions).filter(item => item.question);
-        console.log(filtered)
+
         return filtered.map(({ question }, index) => {
             if (!question) return
             return (

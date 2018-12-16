@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import Nav from './nav'
 import { Link } from 'react-router-dom'
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { SocketProvider } from 'socket.io-react';
+import io from 'socket.io-client'
 import uuid from 'uuid'
 export default class Results extends Component {
         constructor(props) {
@@ -10,6 +13,10 @@ export default class Results extends Component {
             }
         }
         async componentDidMount() {
+            console.log(this.props)
+            const socket = io.connect(`${window.location.host}/socket`);
+            socket.on('connected', msg => console.log(msg));
+            socket.on('chat', msg => console.log(msg));
             const pollFetch = await fetch('/api/getpoll', {
                 method: 'POST',
                 headers:{
@@ -18,32 +25,43 @@ export default class Results extends Component {
                   body: JSON.stringify(this.props.match.params.id)
             })
             const pollData = await pollFetch.json()
-            console.log(pollData)
             this.setState({questions: pollData})
         }
         render() {
-            const { questions } = this.state
-            console.log('BARNACULES')
-            return (
-                <div>
-                <Nav />
-                <div className="contained">
-                <div className="poll">
-                <h4>The results are in!</h4>
-                <div className="actualpoll">
-                <ul> 
-                {this.renderResults()}
-                </ul>
-                <Link to="/" className="waves-effect waves-light btn pollbtn">Create new poll</Link>
-                </div>
-                </div>
-                </div>
-                </div>
-            )
+                return (
+                    <div>
+                    <Nav />
+                    <div className="contained">
+                    <div className="poll">
+                    <h4>The results are in!</h4>
+                    <div className="actualpoll">
+                    <div className="check">
+                    <ul> 
+                    {this.renderResults()}
+                    </ul>
+                    </div>
+                    <Link to="/" className="waves-effect waves-light btn pollbtn">Create new poll</Link>
+                    <CopyToClipboard text={this.state.value}
+            onCopy={() => this.setState({copied: true})} text={`${window.location.hostname}:3000/poll-results/${this.props.match.params.id}`} >
+          <button className="waves-effect waves-light btn purple accent-1 copyres">Copy url to clipboard</button>
+        </CopyToClipboard>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                )
+
         }
         renderResults = () => {
-            const { questions  } = this.state
-            if (!questions) return
+            const { questions } = this.state
+            if (!questions) {
+                return (
+                    <li className="thevotes">
+                    <span>Loading results...</span>
+                </li>
+                )
+            }
+
             const filtered = Object.values(questions).filter(item => item.question);
             return filtered.map(({ question, count }) => {
                 return (

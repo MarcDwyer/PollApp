@@ -61,12 +61,22 @@ ul, li {
 
 input::placeholder {
   color: black;
+  opacity: .85;
 }
 
-.check {
+.actualpoll {
   display: flex;
-  text-align: center;
+
   width: 100%;
+  height: 100%;
+}
+.check {
+
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
   height: 100%;
 }
 .check i {
@@ -75,11 +85,12 @@ input::placeholder {
   font-size: 85px;
 }
 .thevotes {
+  display: flex;
   border-bottom: 1px solid #eee;
 }
 .votes {
-  float: right;
-  margin-right: 10px;
+  margin-left: auto;
+  margin-right: 20px;
 }
 .preloader-wrapper {
   position: absolute;
@@ -87,4 +98,9 @@ input::placeholder {
   margin-left: -50px;
   top: 50%;
   margin-top: -50px;
+}
+.copyres {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
 }
