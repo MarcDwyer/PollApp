@@ -2,10 +2,9 @@ import React, { Component } from 'react'
 import Nav from './nav'
 import { Link } from 'react-router-dom'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { SocketProvider } from 'socket.io-react';
-import io from 'socket.io-client'
 import uuid from 'uuid'
 export default class Results extends Component {
+
         constructor(props) {
             super(props)
             this.state = {
@@ -13,10 +12,6 @@ export default class Results extends Component {
             }
         }
         async componentDidMount() {
-            console.log(this.props)
-            const socket = io.connect(`${window.location.host}/socket`);
-            socket.on('connected', msg => console.log(msg));
-            socket.on('chat', msg => console.log(msg));
             const pollFetch = await fetch('/api/getpoll', {
                 method: 'POST',
                 headers:{
@@ -42,9 +37,9 @@ export default class Results extends Component {
                     </div>
                     <Link to="/" className="waves-effect waves-light btn pollbtn">Create new poll</Link>
                     <CopyToClipboard text={this.state.value}
-            onCopy={() => this.setState({copied: true})} text={`${window.location.hostname}:3000/poll-results/${this.props.match.params.id}`} >
-          <button className="waves-effect waves-light btn purple accent-1 copyres">Copy url to clipboard</button>
-        </CopyToClipboard>
+                           onCopy={() => this.setState({copied: true})} text={`${window.location.hostname}:3000/poll-results/${this.props.match.params.id}`} >
+                          <button className="waves-effect waves-light btn purple accent-1 copyres">Copy url to clipboard</button>
+                         </CopyToClipboard>
                     </div>
                     </div>
                     </div>

@@ -7,12 +7,20 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
-	"github.com/julienschmidt/httprouter"
 	_ "github.com/lib/pq"
 )
 
 var mkey string
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
 
 func init() {
 	fmt.Println(runtime.NumCPU())
@@ -27,14 +35,13 @@ func init() {
 func main() {
 	fmt.Println("server running...")
 
-	router := httprouter.New()
-	// r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/build")))
-	// router.NotFound = http.FileServer(http.Dir("public")) cannot find url
-	//	http.Handle("/", http.FileServer(http.Dir("./")))
-	go Socketme()
-	router.POST("/api/create", Api)
-	router.POST("/api/getpoll", Api)
-	router.POST("/api/update", Api)
-	router.NotFound = http.FileServer(http.Dir("./public"))
-	log.Fatal(http.ListenAndServe(":5000", router))
+	r := mux.NewRouter()
+	r.HandleFunc("/api/create", Api)
+	r.HandleFunc("/api/getpoll", Api)
+	r.HandleFunc("/api/update", Api)
+
+	r.HandleFunc("/sockets/{id}", Socketme)
+
+	// handler := c.Handler(r)
+	http.ListenAndServe(":5000", r)
 }

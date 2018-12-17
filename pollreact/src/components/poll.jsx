@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import uuid from 'uuid'
 import Nav from './nav'
-import Results from './results'
+
 export default class Poll extends Component {
     constructor(props) {
         super(props)
@@ -9,10 +9,13 @@ export default class Poll extends Component {
             isChecked: `quest0`,
             isComplete: false,
             submitted: null,
-            questions: null
+            questions: null,
+            ws: new WebSocket(`ws://localhost:5000/sockets/${this.props.match.params.id}`)
         }
     }
     async componentDidMount() {
+        console.log(this.state)
+        this.state.ws.addEventListener("message", (msg) => console.log(msg))
         const pollFetch = await fetch('/api/getpoll', {
             method: 'POST',
             headers:{
@@ -24,8 +27,8 @@ export default class Poll extends Component {
             this.setState({questions: pollData})
     }
     render() {
-       
-        if (!this.state.questions) {
+       const { ws } = this.state
+        if (!this.state.questions || ws.readyState !== 1) {
             return (
                 <div>
                     <Nav />
@@ -45,6 +48,7 @@ export default class Poll extends Component {
                 </div>
             )
         } 
+        console.log(ws.readyState)
         return (
             <div>
                 <Nav />
@@ -83,9 +87,11 @@ export default class Poll extends Component {
         if (updateFetch.status === 200) {
             const { isChecked, questions } = this.state
             this.setState({isComplete: true, submitted: questions[isChecked]}, () => {
+                this.state.ws.send(JSON.stringify(payload))
                 this.props.history.push(`/poll-results/${this.state.questions.Id}`)
             })
         }
+
     }
     renderQuestions = () => {
         const { questions } = this.state

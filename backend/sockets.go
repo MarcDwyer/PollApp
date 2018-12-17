@@ -1,36 +1,44 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
-	socketio "github.com/googollee/go-socket.io"
+	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 )
 
-func Socketme() {
-	server, err := socketio.NewServer(nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("sockets running...")
-	server.On("connection", func(so socketio.Socket) {
-		log.Println("on connection")
-		so.Join("chat")
-		so.On("chat message", func(msg string) {
-			log.Println("emit:", so.Emit("chat message", msg))
-			server.BroadcastTo("chat", "chat message", msg)
-		})
-		so.On("disconnection", func() {
-			log.Println("on disconnect")
-		})
-		so.On("connect", func() {
-			log.Println("connected")
-		})
-	})
-	server.On("error", func(so socketio.Socket, err error) {
-		log.Println("error:", err)
-	})
+type Payload struct {
+	Id       string `json:"_id"`
+	Question string `json:"question"`
+}
 
-	http.Handle("/socket", server)
+func Socketme(w http.ResponseWriter, r *http.Request) {
+	//	payload := new(Payload)
+	vars := mux.Vars(r)
+	id := vars["id"]
+	fmt.Println(id)
+	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+	//	defer conn.Close()
+	rz := new(Payload)
+	go func(conn *websocket.Conn) {
+		for {
+			mType, msg, err := conn.ReadMessage()
+			if err != nil {
+				fmt.Println("LOOK HERE")
+				fmt.Println(err)
+				break
+			}
+			json.Unmarshal(msg, rz)
+			fmt.Println(*rz)
+			if id == rz.Id {
+				conn.WriteMessage(mType, msg)
+			}
+		}
+	}(conn)
 }

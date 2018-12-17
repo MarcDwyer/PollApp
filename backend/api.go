@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -41,7 +40,7 @@ type UpdatePoll struct {
 	Question string        `json:"question"`
 }
 
-func Api(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func Api(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
 	session, err := mgo.Dial(mkey)
 	if err != nil {
