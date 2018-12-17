@@ -26,6 +26,7 @@ func Socketme(w http.ResponseWriter, r *http.Request) {
 	}
 	//	defer conn.Close()
 	rz := new(Payload)
+	// ch := make(chan *Payload)
 	go func(conn *websocket.Conn) {
 		for {
 			mType, msg, err := conn.ReadMessage()
@@ -36,9 +37,8 @@ func Socketme(w http.ResponseWriter, r *http.Request) {
 			}
 			json.Unmarshal(msg, rz)
 			fmt.Println(*rz)
-			if id == rz.Id {
-				conn.WriteMessage(mType, msg)
-			}
+			conn.WriteMessage(mType, msg)
+
 		}
 	}(conn)
 }

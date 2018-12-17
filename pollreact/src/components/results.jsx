@@ -8,10 +8,12 @@ export default class Results extends Component {
         constructor(props) {
             super(props)
             this.state = {
-                questions: null
+                questions: null,
+                ws: new WebSocket(`ws://localhost:5000/sockets/${this.props.match.params.id}`)
             }
         }
         async componentDidMount() {
+            this.state.ws.addEventListener("message", (msg) => console.log(msg))
             const pollFetch = await fetch('/api/getpoll', {
                 method: 'POST',
                 headers:{
@@ -23,6 +25,7 @@ export default class Results extends Component {
             this.setState({questions: pollData})
         }
         render() {
+            console.log(this.state.ws.readyState)
                 return (
                     <div>
                     <Nav />
