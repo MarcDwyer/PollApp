@@ -14,6 +14,7 @@ export default class Results extends Component {
         }
         async componentDidMount() {
             this.state.ws.addEventListener("message", (msg) => console.log(msg))
+            console.log(this.state.ws)
             const pollFetch = await fetch('/api/getpoll', {
                 method: 'POST',
                 headers:{
