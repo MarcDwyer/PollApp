@@ -13,9 +13,10 @@ export default class Poll extends Component {
             ws: new WebSocket(`ws://localhost:5000/sockets/${this.props.match.params.id}`)
         }
     }
+    componentWillUnmount() {
+        this.state.ws.close()
+    }
     async componentDidMount() {
-        console.log(this.state)
-        this.state.ws.addEventListener("message", (msg) => console.log(msg))
         const pollFetch = await fetch('/api/getpoll', {
             method: 'POST',
             headers:{
@@ -48,7 +49,6 @@ export default class Poll extends Component {
                 </div>
             )
         } 
-        console.log(ws.readyState)
         return (
             <div>
                 <Nav />

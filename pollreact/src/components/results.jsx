@@ -14,11 +14,13 @@ export default class Results extends Component {
                 socketData: null
             }
         }
+        componentWillUnmount() {
+            this.state.ws.close()
+        }
         async componentDidMount() {
             this.state.ws.addEventListener("message", (msg) => {
                 this.setState({socketData: JSON.parse(msg.data)})
             })
-            console.log(this.state.ws)
             const pollFetch = await fetch('/api/getpoll', {
                 method: 'POST',
                 headers:{
@@ -32,8 +34,6 @@ export default class Results extends Component {
         componentDidUpdate(prevProps, prevState) {
             const { socketData, questions } = this.state
             if (socketData && socketData._id === this.props.match.params.id) {
-                console.log("hello world")
-                console.log(this.state.questions)
                 if (prevState.socketData !== this.state.socketData) {
                     const quest = socketData.question
                     const obj = questions[socketData.question]
@@ -46,7 +46,6 @@ export default class Results extends Component {
         }
     }
         render() {
-            console.log(this.state)
                 return (
                     <div>
                     <Nav />
