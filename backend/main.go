@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -8,19 +9,11 @@ import (
 	"runtime"
 
 	"github.com/gorilla/mux"
-	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
 var mkey string
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
 
 func init() {
 	fmt.Println(runtime.NumCPU())
@@ -34,13 +27,18 @@ func init() {
 
 func main() {
 	fmt.Println("server running...")
+	flag.Parse()
+	hub := newHub()
+	go hub.run()
 
 	r := mux.NewRouter()
 	r.HandleFunc("/api/create", Api)
 	r.HandleFunc("/api/getpoll", Api)
 	r.HandleFunc("/api/update", Api)
 
-	r.HandleFunc("/sockets/{id}", Socketme)
+	r.HandleFunc("/sockets/{id}", func(w http.ResponseWriter, r *http.Request) {
+		Socketme(hub, w, r)
+	})
 
 	// handler := c.Handler(r)
 	http.ListenAndServe(":5000", r)
