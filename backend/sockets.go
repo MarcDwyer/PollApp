@@ -90,11 +90,9 @@ func (c *Client) writePump(id string) {
 	for {
 		select {
 		case message, ok := <-c.send:
-			rz, rc := id, string(c.reqid)
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
-			if !ok || rz != rc {
+			if !ok {
 				// The hub closed the channel.
-				fmt.Println("channel denied")
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}

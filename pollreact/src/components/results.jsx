@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Nav from './nav'
 import { Link } from 'react-router-dom'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import update from 'immutability-helper';
 import uuid from 'uuid'
 export default class Results extends Component {
 
@@ -9,11 +10,14 @@ export default class Results extends Component {
             super(props)
             this.state = {
                 questions: null,
-                ws: new WebSocket(`ws://localhost:5000/sockets/${this.props.match.params.id}`)
+                ws: new WebSocket(`ws://localhost:5000/sockets/${this.props.match.params.id}`),
+                socketData: null
             }
         }
         async componentDidMount() {
-            this.state.ws.addEventListener("message", (msg) => console.log(msg))
+            this.state.ws.addEventListener("message", (msg) => {
+                this.setState({socketData: JSON.parse(msg.data)})
+            })
             console.log(this.state.ws)
             const pollFetch = await fetch('/api/getpoll', {
                 method: 'POST',
@@ -25,8 +29,24 @@ export default class Results extends Component {
             const pollData = await pollFetch.json()
             this.setState({questions: pollData})
         }
+        componentDidUpdate(prevProps, prevState) {
+            const { socketData, questions } = this.state
+            if (socketData && socketData._id === this.props.match.params.id) {
+                console.log("hello world")
+                console.log(this.state.questions)
+                if (prevState.socketData !== this.state.socketData) {
+                    const quest = socketData.question
+                    const obj = questions[socketData.question]
+                    obj.count = obj.count + 1
+                    const newState = update(this.state, {
+                        questions: {[quest]: {$set: {...obj }}}
+                    })
+                    this.setState(newState)
+            }
+        }
+    }
         render() {
-            console.log(this.state.ws.readyState)
+            console.log(this.state)
                 return (
                     <div>
                     <Nav />
