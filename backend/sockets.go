@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
 
@@ -81,7 +80,7 @@ func (c *Client) readPump() {
 // A goroutine running writePump is started for each connection. The
 // application ensures that there is at most one writer to a connection by
 // executing all writes from this goroutine.
-func (c *Client) writePump(id string) {
+func (c *Client) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
@@ -124,17 +123,15 @@ func (c *Client) writePump(id string) {
 
 func Socketme(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	//	payload := new(Payload)
-	vars := mux.Vars(r)
-	id := vars["id"]
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		fmt.Println(err)
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), id: id}
+	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
-	go client.writePump(id)
+	go client.writePump()
 	go client.readPump()
 }

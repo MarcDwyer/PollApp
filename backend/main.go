@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -27,19 +26,35 @@ func init() {
 
 func main() {
 	fmt.Println("server running...")
-	flag.Parse()
+
 	hub := newHub()
 	go hub.run()
 
-	r := mux.NewRouter()
-	r.HandleFunc("/api/create", Api)
-	r.HandleFunc("/api/getpoll", Api)
-	r.HandleFunc("/api/update", Api)
+	router := mux.NewRouter()
+	router.HandleFunc("/api/create", Api)
+	router.HandleFunc("/api/getpoll", Api)
+	router.HandleFunc("/api/update", Api)
 
-	r.HandleFunc("/sockets/{id}", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/sockets/{id}", func(w http.ResponseWriter, r *http.Request) {
 		Socketme(hub, w, r)
 	})
 
-	// handler := c.Handler(r)
-	http.ListenAndServe(":5000", r)
+	//	router.HandleFunc("/{rest:.*}", emberHandler)
+	// router.PathPrefix("/").HandlerFunc(serveFile)
+	home := router.PathPrefix("/poll/").Subrouter()
+	home.HandleFunc("/survey/{id}", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./public/build/index.html")
+	})
+	home.HandleFunc("/results/{id}", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./public/build/index.html")
+	})
+	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./public/build"))))
+	log.Fatal(http.ListenAndServe(":5000", router))
+}
+
+// var emberView = template.Must(template.ParseFiles("./public/build/index.html"))
+
+func emberHandler(w http.ResponseWriter, r *http.Request) {
+	//	http.ServeFile(w, r, "./public/build")
+	http.FileServer(http.Dir("./public/build")).ServeHTTP(w, r)
 }

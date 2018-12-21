@@ -10,7 +10,7 @@ export default class Poll extends Component {
             isComplete: false,
             submitted: null,
             questions: null,
-            ws: new WebSocket(`ws://localhost:5000/sockets/${this.props.match.params.id}`)
+            ws: new WebSocket(`ws://${document.location.host}/sockets/${this.props.match.params.id}`)
         }
     }
     componentWillUnmount() {
@@ -88,7 +88,7 @@ export default class Poll extends Component {
             const { isChecked, questions } = this.state
             this.setState({isComplete: true, submitted: questions[isChecked]}, () => {
                 this.state.ws.send(JSON.stringify(payload))
-                this.props.history.push(`/poll-results/${this.state.questions.Id}`)
+                this.props.history.push(`/poll/results/${this.state.questions.Id}`)
             })
         }
 

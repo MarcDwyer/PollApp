@@ -13,8 +13,8 @@ import Results from './components/results'
 ReactDOM.render(
 <BrowserRouter>
 <Switch>
-    <Route exact path="/poll-survey/:id" component={Poll} />
-    <Route exact path="/poll-results/:id" component={Results} />
+    <Route exact path="/poll/survey/:id" component={Poll} />
+    <Route exact path="/poll/results/:id" component={Results} />
     <Route path="/" component={CreatePoll} />
 </Switch>
 </BrowserRouter>

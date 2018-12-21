@@ -56,11 +56,11 @@ export default class CreatePost extends Component {
             <div className="check">
             <i className="fa fa-check" />
             <CopyToClipboard text={this.state.value}
-            onCopy={() => this.setState({copied: true})} text={`${window.location.host}/poll-survey/${this.state.id}`} >
+            onCopy={() => this.setState({copied: true})} text={`${window.location.host}/poll/survey/${this.state.id}`} >
           <button className="waves-effect waves-light btn purple accent-1 copy">Click to copy post url</button>
         </CopyToClipboard>
             </div>
-            <Link to={`/poll-survey/${this.state.id}`} className="waves-effect waves-light btn pollbtn">View Poll</Link>
+            <Link to={`/poll/survey/${this.state.id}`} className="waves-effect waves-light btn pollbtn">View Poll</Link>
             </div>
             </div>
             </div>
